@@ -1,8 +1,7 @@
 #pragma once
-
-
-
 #include <string>
+#include <vector>
+
 namespace Ingredient {
     enum list_ingr{
         Dough,
@@ -23,6 +22,7 @@ enum PizzaType
     Americana = 4,
     Fantasia = 8
 };
+
 enum PizzaSize
 {
     S = 1,
@@ -32,13 +32,13 @@ enum PizzaSize
     XXL = 16
 };
 
-
 class Pizza {
     public:
         PizzaType type;
         PizzaSize size;
-};
 
+        std::vector<Ingredient::list_ingr> ReqIngredient;
+};
 
 class Cook {
     public:
