@@ -12,7 +12,7 @@ OBJ = $(SRC:.c=.o)
 OBJ := $(OBJ:.cpp=.o)
 
 CFLAGS   = -Wall -Wextra -Werror -pedantic -march=native -I./include/
-CXXFLAGS = -Wall -Wextra -Werror -pedantic -march=native -std=c++20 -I./include/
+CXXFLAGS = -Wall -Wextra -Werror -pedantic -march=native -std=c++20 -I./include/ -g3
 LDFLAGS  = -pthread
 NAME = plazza
 
