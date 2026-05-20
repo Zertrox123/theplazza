@@ -5,13 +5,14 @@
 ## project makefile
 ##
 
-SRC = ./src/main.cpp
+SRC = ./src/main.cpp \
+	./src/ipc.cpp
 
 OBJ = $(SRC:.c=.o)
 OBJ := $(OBJ:.cpp=.o)
 
-CFLAGS   = -Wall -Wextra -Werror -pedantic -march=native 
-CXXFLAGS = -Wall -Wextra -Werror -pedantic -march=native -std=c++20 
+CFLAGS   = -Wall -Wextra -Werror -pedantic -march=native -I./include/
+CXXFLAGS = -Wall -Wextra -Werror -pedantic -march=native -std=c++20 -I./include/
 LDFLAGS  = -pthread
 NAME = plazza
 
