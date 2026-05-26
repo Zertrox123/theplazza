@@ -3,7 +3,7 @@
 
 int slave() {
     IPC ipc;
-    ipc.init_slave();
+    ipc.init_slave(1);
     while (true) {
         //std::vector<Order> orders = ipc.get_orders();
         //for (auto i : orders) {

@@ -39,17 +39,20 @@ class IPC {
         IPC();
         ~IPC();
         bool init_master();
-        bool init_slave();
+        bool init_slave(int id);
         bool send_order(int id, int sender, std::vector<std::string> args);
         std::vector<Order> get_orders();
+        int getId() const;
+        void setId(int id);
     private:
         bool update_ipc();
         std::vector<Order> orders;
         std::mutex orders_mutex;
+        int id = 0;
         bool initialized = false;
         std::string path = "/dev/shm/plazza";
         std::string default_path = "/dev/shm/plazza";
         // c pas de l'ai leo nononon c moi j'ai ecris fallback a la main lettre BY LETTRE, + le /dev/shm c du ramdisk donc sa me parrait logic de pas niquer ton disk for du ipc supprime si ta lu + /tmp c du ramdisk des fois pas 100% du temps
-        std::string path_fallback = "/dev/shm/plazza.ipc";
+        std::string path_fallback = "/tmp/plazza";
 };
 //TODO: add eq overload 
