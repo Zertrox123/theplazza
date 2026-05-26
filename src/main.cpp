@@ -1,10 +1,8 @@
 #include "ipc.hpp"
 
 int main() {
-<<<<<<< Updated upstream
     IPC ipc;
     ipc.init_master();
-=======
-    
->>>>>>> Stashed changes
+    if (!ipc.init_master())
+        return 0;
 }

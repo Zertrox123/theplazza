@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -39,4 +40,7 @@ class IPC {
     private:
         bool update_ipc();
         std::vector<Order> orders;
+        std::mutex orders_mutex;
+        bool initialized = false;
 };
+//TODO: add eq overload 
