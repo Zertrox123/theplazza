@@ -42,6 +42,7 @@ bool IPC::init_master() {
         return false;
     }
     fs::create_directory(path);
+    fs::create_directory(path + "/0");
     initialized = true;
     return true;
 };
@@ -64,13 +65,29 @@ bool IPC::send_order(int id, int sender, std::vector<std::string> args) {
     static std::random_device              rd;
     static std::mt19937                    gen(rd());
     static std::uniform_int_distribution<> dis(1, 105);
+
+    int private_id = dis(gen) * dis(gen) * dis(gen) * dis(gen);
+    std::string private_id_str = std::to_string(private_id);
     std::unique_lock<std::mutex> guard(orders_mutex);
-    orders.push_back(Order {
+    Order order_to_write = Order {
         id,
+        private_id,
         sender,
-        dis(gen) * dis(gen) * dis(gen) * dis(gen),
         args
-    });
+    };
+    bool a = fs::exists(path + '/' + std::to_string(id));
+    if (a) {
+        std::ofstream wfile;
+        wfile.open(path + '/' + std::to_string(id)  + '/' + private_id_str);
+        wfile << order_to_write.id << " "
+              << order_to_write.unique_id << " " 
+              << order_to_write.sender << " ";
+        for (auto args : order_to_write.args) {
+            wfile << args << " ";
+        }
+        wfile << std::endl;
+        wfile.close();
+    }
     guard.unlock();
     return update_ipc();
 };
@@ -129,8 +146,7 @@ bool IPC::update_ipc() {
     //wfile.close();
 
     std::vector<Order> new_orders;
-    std::string path = "/path/to/directory";
-    for (const auto & entry : fs::directory_iterator(path)) {
+    for (const auto & entry : fs::directory_iterator(path + '/' + std::to_string(id))) {
         std::cout << entry.path() << std::endl;
         if (entry.path().string().find(".done") == std::string::npos)
             continue;
