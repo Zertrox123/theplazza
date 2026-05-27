@@ -47,17 +47,18 @@ bool IPC::init_master() {
     return true;
 };
 
-bool IPC::init_slave(int id) {
+bool IPC::init_slave(int _id) {
     bool exist = fs::exists(path);
     if (!exist) {
         std::cout << "a master doens't exist" << std::endl;
         return false;
     }
-    bool exist2 = fs::exists(path + '/' + std::to_string(id));
+    bool exist2 = fs::exists(path + '/' + std::to_string(_id));
     if (exist2) {
         std::cerr << "ERR: id already used" << std::endl;
     }
-    fs::create_directory(path + '/' + std::to_string(id));
+    fs::create_directory(path + '/' + std::to_string(_id));
+    id = _id;
     return false;
 };
 
@@ -87,9 +88,12 @@ bool IPC::send_order(int id, int sender, std::vector<std::string> args) {
         }
         wfile << std::endl;
         wfile.close();
+    } else {
+        return false;
     }
     guard.unlock();
-    return update_ipc();
+    update_ipc();
+    return true;
 };
 
 bool Order::operator==(const Order& rhs) const
@@ -99,56 +103,14 @@ bool Order::operator==(const Order& rhs) const
 
 std::vector<Order> IPC::get_orders() {
     update_ipc();
-    std::unique_lock<std::mutex> guard(orders_mutex);
     return orders;
 }
 
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
-    //std::ifstream file;
-    //file.open(path);
-    //std::string line;
-    //while (std::getline(file, line)) {
-    //    std::stringstream ss(line);
-    //    std::string word;
-    //    std::string id;
-    //    std::string unique_id;
-    //    std::string sender;
-    //    std::vector<std::string> args;
-    //    std::getline(ss, id, ' ');
-    //    std::getline(ss, unique_id, ' ');
-    //    std::getline(ss, sender, ' ');
-
-    //    while (std::getline(ss, word, ' ')) {
-    //        args.push_back(word);
-    //    }
-
-    //    orders_to_merge.push_back(Order{
-    //            std::atoi(id.c_str()),
-    //            std::atoi(sender.c_str()),
-    //            std::atoi(unique_id.c_str()),
-    //            args
-    //    });
-    //}
-    //file.close();
-    
-    //std::ofstream wfile;
-    //wfile.open(path);
-    //for (auto to_write : orders_to_write) {
-    //    wfile << to_write.id << " "
-    //          << to_write.unique_id << " " 
-    //          << to_write.sender << " ";
-    //    for (auto args : to_write.args) {
-    //        wfile << args << " ";
-    //    }
-    //    wfile << std::endl;
-    //}
-    //wfile.close();
-
     std::vector<Order> new_orders;
     for (const auto & entry : fs::directory_iterator(path + '/' + std::to_string(id))) {
-        std::cout << entry.path() << std::endl;
-        if (entry.path().string().find(".done") == std::string::npos)
+        if (entry.path().string().find(".done") != std::string::npos)
             continue;
         std::ifstream file;
         file.open(entry.path());
@@ -170,8 +132,8 @@ bool IPC::update_ipc() {
 
             new_orders.push_back(Order{
                     std::atoi(id.c_str()),
-                    std::atoi(sender.c_str()),
                     std::atoi(unique_id.c_str()),
+                    std::atoi(sender.c_str()),
                     args
             });
 
@@ -182,3 +144,13 @@ bool IPC::update_ipc() {
     }
     return false;
 };
+
+
+bool IPC::set_order_done(Order order) {
+    int index = 0;
+    for (; orders.at(index).unique_id != order.unique_id; index++);
+    orders.erase(orders.begin() + index);
+    fs::remove(path + '/' + std::to_string(id) + '/' + std::to_string(order.unique_id));
+    update_ipc();
+    return true;
+}
