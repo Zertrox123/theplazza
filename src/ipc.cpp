@@ -29,7 +29,7 @@ IPC::IPC() {
 
 IPC::~IPC() {
     if (initialized) {
-        fs::remove(path);
+        fs::remove_all(path);
     }
 }
 
@@ -146,6 +146,7 @@ bool IPC::update_ipc() {
 
 
 bool IPC::set_order_done(Order order) {
+    std::unique_lock<std::mutex> guard(orders_mutex);
     int index = 0;
     for (; orders.at(index).unique_id != order.unique_id; index++);
     orders.erase(orders.begin() + index);

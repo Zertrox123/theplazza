@@ -1,5 +1,6 @@
 #include "ipc.hpp"
 #include <iostream>
+#include <regex>
 
 int slave() {
     IPC ipc;
@@ -24,7 +25,7 @@ int main() {
     std::regex pattern(R"(\s*([a-zA-Z]+)\s+(S|M|L|XL|XXL)\s+x([1-9][0-9]*)\s*)");
 
     if (!ipc.init_master()) {
-        slave();
+        std::cerr << "ERR: another plazza is running" << std::endl;
         return 0;
     }
     while (true) {
@@ -32,7 +33,11 @@ int main() {
         std::getline(std::cin, input_user);
         std::stringstream ss(input_user);
         std::string order;
+        if (input_user == "exit")
+            break;
         while (std::getline(ss, order, ';')) {
+            if (order.length() < 1)
+                continue;
             std::smatch match;
             if (std::regex_match(order, match, pattern)) {
                 std::string pizza_name = match[1].str();
