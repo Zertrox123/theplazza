@@ -5,6 +5,8 @@
 #include <string>
 #include <thread>
 
+Kitchen::Kitchen() {}
+Kitchen::~Kitchen() {}
 
 void Kitchen::add_cook(Cook cook) {
     cooks.push_back(cook);
