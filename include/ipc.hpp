@@ -22,6 +22,12 @@
  *
  */
 
+enum order_type
+{
+    OCOOK_PIZZA = 1;
+    ODESTRUCT = 99;
+}
+
 class Order{
     public:
         // what type of order
@@ -32,7 +38,6 @@ class Order{
         std::vector<std::string> args;
         bool operator==(const Order& rhs) const;
 };
-
 
 class IPC {
     public:
