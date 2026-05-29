@@ -57,7 +57,7 @@ class IPC {
         bool update_ipc();
         std::vector<Order> orders;
         std::mutex orders_mutex;
-        std::string id = 0;
+        std::string id = "";
         bool initialized = false;
         std::string path = "/dev/shm/plazza";
         std::string default_path = "/dev/shm/plazza";
