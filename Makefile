@@ -6,7 +6,8 @@
 ##
 
 SRC = ./src/main.cpp \
-	./src/ipc.cpp
+	./src/ipc.cpp \
+	./src/utils.cpp
 
 OBJ = $(SRC:.c=.o)
 OBJ := $(OBJ:.cpp=.o)

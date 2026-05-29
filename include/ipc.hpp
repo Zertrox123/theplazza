@@ -24,9 +24,9 @@
 
 enum order_type
 {
-    OCOOK_PIZZA = 1;
-    ODESTRUCT = 99;
-}
+    OCOOK_PIZZA = 1,
+    ODESTRUCT = 99,
+};
 
 class Order{
     public:
