@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <mutex>
 #include <sstream>
 #include <random>
@@ -37,6 +38,8 @@ class Order{
         int sender = 0;
         std::vector<std::string> args;
         bool operator==(const Order& rhs) const;
+        Order deserialize(std::vector<uint8_t> buf);
+        std::vector<uint8_t> serialize(std::vector<uint8_t> buf);
 };
 
 class IPC {
@@ -44,17 +47,17 @@ class IPC {
         IPC();
         ~IPC();
         bool init_master();
-        bool init_slave(int id);
-        bool send_order(int id, int sender, std::vector<std::string> args);
+        bool init_slave(std::string id);
+        bool send_order(std::string target, int id, int sender, std::vector<std::string> args);
         bool set_order_done(Order order);
         std::vector<Order> get_orders();
         int getId() const;
-        void setId(int id);
+        void setId(std::string id);
     private:
         bool update_ipc();
         std::vector<Order> orders;
         std::mutex orders_mutex;
-        int id = 0;
+        std::string id = 0;
         bool initialized = false;
         std::string path = "/dev/shm/plazza";
         std::string default_path = "/dev/shm/plazza";

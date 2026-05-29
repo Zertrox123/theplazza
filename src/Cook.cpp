@@ -5,9 +5,9 @@
 #include <ostream>
 #include <thread>
 
-void Cook::start(int id) {
+void Cook::start(std::string id) {
     IPC ipc;
-    ipc.init_slave(id);
+    ipc.init_slave("c" + id);
 
     while (true) {
         for (auto i : ipc.get_orders()) {

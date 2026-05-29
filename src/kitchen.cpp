@@ -10,13 +10,13 @@ void Kitchen::add_cook(Cook cook) {
     cooks.push_back(cook);
 }
 
-void Kitchen::loop(int id) {
+void Kitchen::loop(std::string id) {
     IPC ipc;
-    ipc.init_slave(id);
+    ipc.init_slave("k" + id);
     int cook_count = 0;
     for (auto cook : cooks) {
         cook_count++;
-        std::thread t(cook.start, std::atoi((std::to_string(id) + "0000000" + std::to_string(cook_count)).c_str()));
+        std::thread t(cook.start, "c" + std::to_string(cook_count)); 
     }
 
     while (true) {

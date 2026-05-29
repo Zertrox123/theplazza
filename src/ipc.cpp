@@ -46,22 +46,22 @@ bool IPC::init_master() {
     return true;
 };
 
-bool IPC::init_slave(int _id) {
+bool IPC::init_slave(std::string _id) {
     bool exist = fs::exists(path);
     if (!exist) {
         std::cout << "a master doens't exist" << std::endl;
         return false;
     }
-    bool exist2 = fs::exists(path + '/' + std::to_string(_id));
+    bool exist2 = fs::exists(path + '/' + _id);
     if (exist2) {
         std::cerr << "ERR: id already used" << std::endl;
     }
-    fs::create_directory(path + '/' + std::to_string(_id));
+    fs::create_directory(path + '/' + _id);
     id = _id;
     return false;
 };
 
-bool IPC::send_order(int id, int sender, std::vector<std::string> args) {
+bool IPC::send_order(std::string target, int id, int sender, std::vector<std::string> args) {
     static std::random_device              rd;
     static std::mt19937                    gen(rd());
     static std::uniform_int_distribution<> dis(1, 105);
@@ -75,10 +75,10 @@ bool IPC::send_order(int id, int sender, std::vector<std::string> args) {
         sender,
         args
     };
-    bool a = fs::exists(path + '/' + std::to_string(id));
+    bool a = fs::exists(path + '/' + target);
     if (a) {
         std::ofstream wfile;
-        wfile.open(path + '/' + std::to_string(id)  + '/' + private_id_str);
+        wfile.open(path + '/' + target + '/' + private_id_str);
         wfile << order_to_write.id << " "
               << order_to_write.unique_id << " " 
               << order_to_write.sender << " ";
@@ -108,7 +108,7 @@ std::vector<Order> IPC::get_orders() {
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;
-    for (const auto & entry : fs::directory_iterator(path + '/' + std::to_string(id))) {
+    for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
         if (entry.path().string().find(".done") != std::string::npos)
             continue;
         std::ifstream file;
@@ -150,7 +150,7 @@ bool IPC::set_order_done(Order order) {
     int index = 0;
     for (; orders.at(index).unique_id != order.unique_id; index++);
     orders.erase(orders.begin() + index);
-    fs::remove(path + '/' + std::to_string(id) + '/' + std::to_string(order.unique_id));
+    fs::remove(path + '/' + id + '/' + std::to_string(order.unique_id));
     update_ipc();
     return true;
 }

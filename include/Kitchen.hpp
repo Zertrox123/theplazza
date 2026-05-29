@@ -10,10 +10,8 @@ class Kitchen {
         Kitchen();
         ~Kitchen();
         void add_cook(Cook cook);
-        void handle_command(int order_count);
         void actual_time(long int kactual_time);
-        void loop(int id);
-        void handle_stock(std::unordered_map<std::string, int> stock_ingredient);
+        void loop(std::string id);
         void get_status() const;
         void set_status(int stat) const;
     private:
