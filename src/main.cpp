@@ -1,23 +1,7 @@
 #include "ipc.hpp"
+#include "Utils.hpp"
 #include <iostream>
 #include <regex>
-
-int slave() {
-    IPC ipc;
-    for (int i = 1; i != 4; i++)
-        ipc.init_slave(i);
-    while (true) {
-        std::vector<Order> orders = ipc.get_orders();
-        for (auto i : orders) {
-            std::cout << "order: " << i.id << " " << i.unique_id << " args: " << std::endl;
-            for (auto x : i.args) {
-                std::cout << " - " << x << std::endl;
-            }
-            ipc.set_order_done(i);
-        }
-    }
-    return 0;
-}
 
 int main() {
     IPC ipc;
@@ -28,6 +12,9 @@ int main() {
         std::cerr << "ERR: another plazza is running" << std::endl;
         return 0;
     }
+
+    utils::init();
+
     while (true) {
         std::cout << "$> ";
         std::getline(std::cin, input_user);

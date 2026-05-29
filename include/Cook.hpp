@@ -3,7 +3,7 @@
 class Cook {
     public:
         Cook();
-        void start();
+        static void start(int id);
         ~Cook();
     private:
 };
