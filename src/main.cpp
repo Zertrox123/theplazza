@@ -30,7 +30,7 @@ int main() {
                 std::string pizza_name = match[1].str();
                 std::string pizza_size = match[2].str();
                 std::string pizza_count = match[3].str().substr(1);
-                ipc.send_order(1, 1, std::vector<std::string>{pizza_name, pizza_size, pizza_count});
+                ipc.send_order("k1", 1, 1, std::vector<std::string>{pizza_name, pizza_size, pizza_count});
             } else {
                 std::cout << "Format invalide: " << order << "\n";
             }

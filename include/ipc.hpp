@@ -51,7 +51,7 @@ class IPC {
         bool send_order(std::string target, int id, int sender, std::vector<std::string> args);
         bool set_order_done(Order order);
         std::vector<Order> get_orders();
-        int getId() const;
+        std::string getId() const;
         void setId(std::string id);
     private:
         bool update_ipc();
