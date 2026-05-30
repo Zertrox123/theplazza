@@ -91,6 +91,36 @@ bool IPC::send_order(std::string target, int id, int sender, std::vector<std::st
     return true;
 };
 
+bool IPC::send_order_broadcast(int id, int sender, std::vector<std::string> args) {
+    static std::random_device              rd;
+    static std::mt19937                    gen(rd());
+    static std::uniform_int_distribution<> dis(1, 105);
+
+    int private_id = dis(gen) * dis(gen) * dis(gen) * dis(gen);
+    std::string private_id_str = std::to_string(private_id);
+    std::unique_lock<std::mutex> guard(orders_mutex);
+    Order order_to_write = Order {
+        id,
+        private_id,
+        sender,
+        args
+    };
+    bool a = fs::exists(path + "/broadcast");
+    if (a) {
+        std::vector<uint8_t> buf = Order::serialize(order_to_write);
+        std::ofstream file(path + "/boardcast/" + std::to_string(private_id), std::ios::binary | std::ios::trunc);
+        if (file.is_open()) {
+            file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+            file.close();
+        }
+    } else {
+        return false;
+    }
+    guard.unlock();
+    update_ipc();
+    return true;
+};
+
 bool Order::operator==(const Order& rhs) const
 {
     return rhs.unique_id == unique_id;
@@ -113,6 +143,22 @@ bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;
     for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
+        if (entry.path().string().find(".done") != std::string::npos)
+            continue;
+        std::ifstream file;
+        file.open(entry.path());
+        std::ifstream filee(path, std::ios::binary | std::ios::ate);
+        size_t size = file.tellg();
+        filee.seekg(0, std::ios::beg);
+        std::vector<uint8_t> buf(size);
+        filee.read(reinterpret_cast<char*>(buf.data()), size);
+        filee.close();
+     
+        Order orders;
+        orders = Order::deserialize(buf);
+        new_orders.push_back(orders);
+    }
+    for (const auto & entry : fs::directory_iterator(path + "/broadcast")) {
         if (entry.path().string().find(".done") != std::string::npos)
             continue;
         std::ifstream file;

@@ -58,6 +58,7 @@ class IPC {
         bool init_master();
         bool init_slave(std::string id);
         bool send_order(std::string target, int id, int sender, std::vector<std::string> args);
+        bool send_order_broadcast(int id, int sender, std::vector<std::string> args);
         bool set_order_done(Order order);
         std::vector<Order> get_orders();
         std::string getId() const;
