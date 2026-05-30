@@ -4,9 +4,11 @@
 #include <string>
 #include <functional>
 
+class Kitchen;
+
 class Cook { 
     public:
-        Cook(int id, Queue& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId);
+        Cook(int id, Queue& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId, Kitchen& kitchen);
         void work();
     private:
         int id;
@@ -16,4 +18,5 @@ class Cook {
         bool& isRunning;
         double multiplier;
         std::string kitchenId;
+        Kitchen& kitchen;
 };

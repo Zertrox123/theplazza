@@ -12,6 +12,7 @@ class Kitchen {
         Kitchen(double multiplier, int cooksPerKitchen, int replaceTime);
         ~Kitchen();
         void loop(std::string id);
+        bool takeStock(std::string pizzaName);
     private:
         double multiplier; 
         int cooksPerKitchen; 
@@ -19,7 +20,8 @@ class Kitchen {
         bool isRunning; 
         Queue orders;
         PlazzaCondVar bell; 
-        PlazzaMutex bellMutex; 
+        PlazzaMutex bellMutex;
+        PlazzaMutex stockMutex;
         std::vector<Cook*> cooks; 
         std::vector<std::thread> cookThreads; 
         int stockDough;

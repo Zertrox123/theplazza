@@ -1,6 +1,5 @@
 #include "Utils.hpp"
 #include "Kitchen.hpp"
-#include <string>
 #include <unistd.h>
 
 void utils::init(double multiplier, int cooksPerKitchen, int replaceTime) {
@@ -12,4 +11,4 @@ void utils::init(double multiplier, int cooksPerKitchen, int replaceTime) {
             exit(0);
         }
     }
-};
+}

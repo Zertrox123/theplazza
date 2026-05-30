@@ -13,9 +13,13 @@
  *      - pizzaria id
  *      - pizza name
  *
- *  id 2 -> pizza_finished 
+ *  id 2 -> status
  *  args:
- *      - pizza name
+ *      - kitchen id
+ *      - cooks busy
+ *      - cooks total
+ *      - pending orders
+ *      - stocks...
  *
  * id 3 -> self destroy
  *  args:
@@ -26,6 +30,7 @@
 enum order_type
 {
     OCOOK_PIZZA = 1,
+    OSTATUS = 2,
     ODESTRUCT = 99,
 };
 
@@ -60,6 +65,7 @@ class IPC {
         bool send_order(std::string target, int id, int sender, std::vector<std::string> args);
         bool send_order_broadcast(int id, int sender, std::vector<std::string> args);
         bool set_order_done(Order order);
+        bool remove_broadcast(int unique_id);
         std::vector<Order> get_orders();
         std::string getId() const;
         void setId(std::string id);

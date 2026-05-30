@@ -61,7 +61,7 @@ bool IPC::init_slave(std::string _id) {
     }
     fs::create_directory(path + '/' + _id);
     id = _id;
-    return false;
+    return true;
 };
 
 bool IPC::send_order(std::string target, int id, int sender, std::vector<std::string> args) {
@@ -144,39 +144,45 @@ void IPC::setId(std::string _id) {
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;
-    if (!fs::exists(path + '/' + id))
-        return false;
-    for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
-        if (entry.path().string().find(".done") != std::string::npos)
-            continue;
-        std::ifstream file;
-        file.open(entry.path());
-        std::ifstream filee(path, std::ios::binary | std::ios::ate);
-        size_t size = file.tellg();
-        filee.seekg(0, std::ios::beg);
-        std::vector<uint8_t> buf(size);
-        filee.read(reinterpret_cast<char*>(buf.data()), size);
-        filee.close();
-     
-        Order orders;
-        orders = Order::deserialize(buf);
-        new_orders.push_back(orders);
+    if (!id.empty() && fs::exists(path + '/' + id)) {
+        for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
+            if (entry.path().string().find(".done") != std::string::npos)
+                continue;
+            std::ifstream filee(entry.path(), std::ios::binary | std::ios::ate);
+            if (!filee.is_open())
+                continue;
+            size_t size = filee.tellg();
+            if (size == 0 || size > 4096)
+                continue;
+            filee.seekg(0, std::ios::beg);
+            std::vector<uint8_t> buf(size);
+            filee.read(reinterpret_cast<char*>(buf.data()), size);
+            filee.close();
+
+            Order orders;
+            orders = Order::deserialize(buf);
+            new_orders.push_back(orders);
+        }
     }
-    for (const auto & entry : fs::directory_iterator(path + "/broadcast")) {
-        if (entry.path().string().find(".done") != std::string::npos)
-            continue;
-        std::ifstream file;
-        file.open(entry.path());
-        std::ifstream filee(path, std::ios::binary | std::ios::ate);
-        size_t size = file.tellg();
-        filee.seekg(0, std::ios::beg);
-        std::vector<uint8_t> buf(size);
-        filee.read(reinterpret_cast<char*>(buf.data()), size);
-        filee.close();
-     
-        Order orders;
-        orders = Order::deserialize(buf);
-        new_orders.push_back(orders);
+    if (fs::exists(path + "/broadcast")) {
+        for (const auto & entry : fs::directory_iterator(path + "/broadcast")) {
+            if (entry.path().string().find(".done") != std::string::npos)
+                continue;
+            std::ifstream filee(entry.path(), std::ios::binary | std::ios::ate);
+            if (!filee.is_open())
+                continue;
+            size_t size = filee.tellg();
+            if (size == 0 || size > 4096)
+                continue;
+            filee.seekg(0, std::ios::beg);
+            std::vector<uint8_t> buf(size);
+            filee.read(reinterpret_cast<char*>(buf.data()), size);
+            filee.close();
+
+            Order orders;
+            orders = Order::deserialize(buf);
+            new_orders.push_back(orders);
+        }
     }
     orders = new_orders;
     return false;
@@ -185,10 +191,17 @@ bool IPC::update_ipc() {
 
 bool IPC::set_order_done(Order order) {
     std::unique_lock<std::mutex> guard(orders_mutex);
-    int index = 0;
-    for (; orders.at(index).unique_id != order.unique_id; index++);
-    orders.erase(orders.begin() + index);
     fs::remove(path + '/' + id + '/' + std::to_string(order.unique_id));
-    update_ipc();
+    for (long unsigned int index = 0; index < orders.size(); index++) {
+        if (orders[index].unique_id == order.unique_id) {
+            orders.erase(orders.begin() + index);
+            break;
+        }
+    }
+    return true;
+}
+
+bool IPC::remove_broadcast(int unique_id) {
+    fs::remove(path + "/broadcast/" + std::to_string(unique_id));
     return true;
 }

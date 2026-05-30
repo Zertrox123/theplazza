@@ -59,6 +59,12 @@ class Queue {
             _mutex.unlock();
             return empty;
         }
+        int getSize() {
+            _mutex.lock();
+            int s = _queue.size();
+            _mutex.unlock();
+            return s;
+        }
     private:
         std::queue<Order> _queue;
         PlazzaMutex _mutex;
