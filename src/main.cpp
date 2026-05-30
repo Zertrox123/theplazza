@@ -5,7 +5,7 @@
 #include <regex>
 #include <unistd.h>
 
-int main() {
+int main(int argc, char **argv) {
     IPC ipc;
     std::string input_user;
     std::regex pattern(R"(\s*([a-zA-Z]+)\s+(S|M|L|XL|XXL)\s+x([1-9][0-9]*)\s*)");
