@@ -1,7 +1,5 @@
 #pragma once
-#include "SafeQueue.hpp"
-#include "PlazzaCondVar.hpp"
-#include "PlazzaMutex.hpp"
+#include "Plazza.hpp"
 #include "ipc.hpp"
 #include <string>
 
