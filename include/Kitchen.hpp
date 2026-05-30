@@ -9,28 +9,32 @@
 
 class Kitchen { 
     public:
-        Kitchen(double multiplier, int cooksPerKitchen, int replaceTime);
+        Kitchen(double mult, int nb_cooks, int regen);
         ~Kitchen();
         void loop(std::string id);
-        bool takeStock(std::string pizzaName);
+        bool takeStock(std::string name);
+        void cookStart();
+        void cookEnd();
+        int getBusy();
     private:
-        double multiplier; 
-        int cooksPerKitchen; 
-        int replaceTime; 
-        bool isRunning; 
+        double mult; 
+        int nb_cooks; 
+        int regen; 
+        bool run; 
         Queue orders;
         PlazzaCondVar bell; 
-        PlazzaMutex bellMutex;
-        PlazzaMutex stockMutex;
+        PlazzaMutex bell_mx;
+        PlazzaMutex st_mx;
         std::vector<Cook*> cooks; 
-        std::vector<std::thread> cookThreads; 
-        int stockDough;
-        int stockTomato;
-        int stockGruyere;
-        int stockHam;
-        int stockMushrooms;
-        int stockSteak;
-        int stockEggplant;
-        int stockGoatCheese;
-        int stockChiefLove;
+        std::vector<std::thread> threads; 
+        int st_dough;
+        int st_tomato;
+        int st_gruyere;
+        int st_ham;
+        int st_mush;
+        int st_steak;
+        int st_egg;
+        int st_goat;
+        int st_chief;
+        int nb_busy;
 };

@@ -13,14 +13,7 @@
  *      - pizzaria id
  *      - pizza name
  *
- *  id 2 -> status
- *  args:
- *      - kitchen id
- *      - cooks busy
- *      - cooks total
- *      - pending orders
- *      - stocks...
- *
+ *  id 2 -> status (pas d'args, la cuisine ecrit un fichier status)
  * id 3 -> self destroy
  *  args:
  *      - pizza name

@@ -8,15 +8,15 @@ class Kitchen;
 
 class Cook { 
     public:
-        Cook(int id, Queue& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId, Kitchen& kitchen);
+        Cook(int id, Queue& q, PlazzaCondVar& bell, PlazzaMutex& mx, bool& run, double mult, std::string kid, Kitchen& k);
         void work();
     private:
         int id;
-        Queue& queue;
+        Queue& q;
         PlazzaCondVar& bell;
-        PlazzaMutex& bellMutex;
-        bool& isRunning;
-        double multiplier;
-        std::string kitchenId;
-        Kitchen& kitchen;
+        PlazzaMutex& mx;
+        bool& run;
+        double mult;
+        std::string kid;
+        Kitchen& k;
 };

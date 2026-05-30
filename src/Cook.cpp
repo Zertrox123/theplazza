@@ -1,57 +1,47 @@
 #include "Cook.hpp"
 #include "Kitchen.hpp"
+#include "Utils.hpp"
 #include "ipc.hpp"
-#include <iostream>
 #include <thread>
 #include <chrono>
-#include <unistd.h>
-#include <sys/file.h>
 
-static void kprint(std::string msg)
-{
-    flock(fileno(stdout), LOCK_EX);
-    write(fileno(stdout), msg.c_str(), msg.size());
-    flock(fileno(stdout), LOCK_UN);
-}
-
-Cook::Cook(int id, Queue& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId, Kitchen& kitchen)
-    : id(id), queue(queue), bell(bell), bellMutex(bellMutex), isRunning(isRunning), multiplier(multiplier), kitchenId(kitchenId), kitchen(kitchen) {}
+Cook::Cook(int id, Queue& q, PlazzaCondVar& bell, PlazzaMutex& mx, bool& run, double mult, std::string kid, Kitchen& k)
+    : id(id), q(q), bell(bell), mx(mx), run(run), mult(mult), kid(kid), k(k) {}
 
 void Cook::work() {
-    while (isRunning) {
-        Order currentOrder;
-        std::unique_lock<std::mutex> lock(bellMutex.get());
+    while (run) {
+        Order cmd;
+        std::unique_lock<std::mutex> lock(mx.get());
         bell.wait(lock, [this]() {
-            return !queue.isEmpty() || !isRunning;
+            return !q.isEmpty() || !run;
         });
-        if (!isRunning && queue.isEmpty()) {
-            break; 
-        }
-        if (queue.tryPop(currentOrder)) {
+        if (!run && q.isEmpty())
+            break;
+        if (q.tryPop(cmd)) {
             lock.unlock();
-            std::string pizzaName = currentOrder.args[0];
-            while (isRunning && kitchen.takeStock(pizzaName) == false)
+            std::string name = cmd.args[0];
+            while (run && k.takeStock(name) == false)
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            if (!isRunning)
+            if (!run)
                 continue;
-            kprint("[Cuisine " + kitchenId + "] Cook " + std::to_string(id) + " prepare une " + pizzaName + "\n");
-            int baseTime = 0;
-            if (pizzaName == "Margarita" || pizzaName == "margarita") {
-                baseTime = 1; 
-            } else if (pizzaName == "Regina" || pizzaName == "regina") {
-                baseTime = 2; 
-            } else if (pizzaName == "Americana" || pizzaName == "americana") {
-                baseTime = 2; 
-            } else if (pizzaName == "Fantasia" || pizzaName == "fantasia") {
-                baseTime = 4; 
-            }
-            double totalTimeSeconds = baseTime * multiplier; 
-            int sleepTimeMs = totalTimeSeconds * 1000;
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleepTimeMs));
-            kprint("[Cuisine " + kitchenId + "] Cook " + std::to_string(id) + " a TERMINE la " + pizzaName + "\n");
+            k.cookStart();
+            utils::kprint("[Cuisine " + kid + "] Cook " + std::to_string(id) + " prepare une " + name + "\n");
+            int t = 0;
+            if (name == "Margarita" || name == "margarita")
+                t = 1;
+            else if (name == "Regina" || name == "regina")
+                t = 2;
+            else if (name == "Americana" || name == "americana")
+                t = 2;
+            else if (name == "Fantasia" || name == "fantasia")
+                t = 4;
+            int ms = t * mult * 1000;
+            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+            utils::kprint("[Cuisine " + kid + "] Cook " + std::to_string(id) + " a TERMINE la " + name + "\n");
             IPC ipc;
-            ipc.setId("k" + kitchenId);
-            ipc.set_order_done(currentOrder); 
+            ipc.setId(utils::kid(kid));
+            ipc.set_order_done(cmd);
+            k.cookEnd();
         }
     }
 }

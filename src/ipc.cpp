@@ -3,8 +3,8 @@
 #include <mutex>
 #include <string>
 #include <sys/mman.h>
-#include <sys/stat.h>        /* For mode constants */
-#include <fcntl.h>           /* For O_* constants */
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <cstdlib>
 #include <stdlib.h>
 #include "ipc.hpp"
@@ -109,13 +109,13 @@ bool IPC::send_order_broadcast(int id, int sender, std::vector<std::string> args
         args
     };
     bool a = fs::exists(path + "/broadcast");
-    printf("%i\n", a);
     if (a) {
-        std::cout << path + "/broadcast/" + std::to_string(private_id) << std::endl;
         std::vector<uint8_t> buf = Order::serialize(order_to_write);
         std::ofstream file(path + "/broadcast/" + std::to_string(private_id), std::ios::binary | std::ios::trunc);
-        file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
-        file.close();
+        if (file.is_open()) {
+            file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+            file.close();
+        }
     } else {
         return false;
     }
