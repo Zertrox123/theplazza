@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cstdio>
 #include <mutex>
 #include <string>
 #include <sys/mman.h>
@@ -42,6 +44,7 @@ bool IPC::init_master() {
     }
     fs::create_directory(path);
     fs::create_directory(path + "/0");
+    fs::create_directory(path + "/broadcast");
     initialized = true;
     return true;
 };
@@ -106,13 +109,13 @@ bool IPC::send_order_broadcast(int id, int sender, std::vector<std::string> args
         args
     };
     bool a = fs::exists(path + "/broadcast");
+    printf("%i\n", a);
     if (a) {
+        std::cout << path + "/broadcast/" + std::to_string(private_id) << std::endl;
         std::vector<uint8_t> buf = Order::serialize(order_to_write);
-        std::ofstream file(path + "/boardcast/" + std::to_string(private_id), std::ios::binary | std::ios::trunc);
-        if (file.is_open()) {
-            file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
-            file.close();
-        }
+        std::ofstream file(path + "/broadcast/" + std::to_string(private_id), std::ios::binary | std::ios::trunc);
+        file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+        file.close();
     } else {
         return false;
     }
@@ -141,6 +144,8 @@ void IPC::setId(std::string _id) {
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;
+    if (!fs::exists(path))
+        return false;
     for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
         if (entry.path().string().find(".done") != std::string::npos)
             continue;

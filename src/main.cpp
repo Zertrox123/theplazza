@@ -5,7 +5,7 @@
 #include <regex>
 #include <unistd.h>
 
-int main(int argc, char **argv) {
+int main() {
     IPC ipc;
     std::string input_user;
     std::regex pattern(R"(\s*([a-zA-Z]+)\s+(S|M|L|XL|XXL)\s+x([1-9][0-9]*)\s*)");
@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
         std::cerr << "Usage: ./plazza <multiplier> <cooks_per_kitchen> <time_to_replace_ingredients>" << std::endl;
         return 84;
     }
+
     if (!ipc.init_master()) {
         std::cerr << "ERR: another plazza is running" << std::endl;
         return 0;
