@@ -28,7 +28,7 @@ Kitchen::~Kitchen() {
 
 void Kitchen::loop(std::string id) {
     IPC ipc;
-    ipc.init_slave(id);
+    ipc.init_slave("k" + id);
     for (int i = 0; i < cooksPerKitchen; i++) {
         Cook* newCook = new Cook(i + 1, orders, bell, bellMutex, isRunning, multiplier, id);
         cooks.push_back(newCook);

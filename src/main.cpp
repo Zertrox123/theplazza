@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
                         ipc.setId("0");
                     }
                     if (best_kitchen == "") {
-                        best_kitchen = "k" + std::to_string(next_kitchen_id);
+                        best_kitchen = std::to_string(next_kitchen_id);
                         next_kitchen_id++;
                         active_kitchens.push_back(best_kitchen);
                         pid_t pid = fork();

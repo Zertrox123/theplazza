@@ -43,7 +43,6 @@ bool IPC::init_master() {
         return false;
     }
     fs::create_directory(path);
-    fs::create_directory(path + "/0");
     fs::create_directory(path + "/broadcast");
     initialized = true;
     return true;
@@ -58,6 +57,7 @@ bool IPC::init_slave(std::string _id) {
     bool exist2 = fs::exists(path + '/' + _id);
     if (exist2) {
         std::cerr << "ERR: id already used" << std::endl;
+        return false;
     }
     fs::create_directory(path + '/' + _id);
     id = _id;
@@ -144,7 +144,7 @@ void IPC::setId(std::string _id) {
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;
-    if (!fs::exists(path))
+    if (!fs::exists(path + '/' + id))
         return false;
     for (const auto & entry : fs::directory_iterator(path + '/' + id)) {
         if (entry.path().string().find(".done") != std::string::npos)

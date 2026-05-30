@@ -9,6 +9,7 @@ void utils::init(double multiplier, int cooksPerKitchen, int replaceTime) {
         if (pid == 0) {
             Kitchen k(multiplier, cooksPerKitchen, replaceTime);
             k.loop(std::to_string(i));
+            exit(0);
         }
     }
 };
