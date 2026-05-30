@@ -29,8 +29,8 @@ IPC::IPC() {
     }
 };
 
-IPC::~IPC() {
-    if (initialized) {
+IPC::~IPC()  {
+    if (initialized && id == "0") {
         fs::remove_all(path);
     }
 }

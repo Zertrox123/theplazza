@@ -180,7 +180,7 @@ void Kitchen::loop(std::string id) {
             bell.notifyAll();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        if (idle >= 100 && std::stoi(id) >= 3) {
+        if (idle >= 100) {
             utils::kprint("Cuisine " + id + "inactive depuis 5 secondes (fermeture)\n");
             run = false;
             break;

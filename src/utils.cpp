@@ -8,7 +8,7 @@
 
 void utils::init(double mult, int nb_cooks, int regen)
 {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 0; i++) {
         pid_t pid = fork();
         if (pid == 0) {
             Kitchen k(mult, nb_cooks, regen);
