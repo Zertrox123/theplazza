@@ -9,7 +9,8 @@ SRC = ./src/Cook.cpp \
 	./src/main.cpp \
 	./src/ipc.cpp \
 	./src/kitchen.cpp \
-	./src/utils.cpp
+	./src/utils.cpp \
+	./src/Order.cpp
 
 OBJ = $(SRC:.c=.o)
 OBJ := $(OBJ:.cpp=.o)

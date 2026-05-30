@@ -3,6 +3,7 @@
 #include "Kitchen.hpp"
 #include <iostream>
 #include <regex>
+#include <string>
 
 int main(int argc, char **argv) {
     IPC ipc;

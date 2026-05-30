@@ -38,9 +38,18 @@ class Order{
         int sender = 0;
         std::vector<std::string> args;
         bool operator==(const Order& rhs) const;
-        Order deserialize(std::vector<uint8_t> buf);
-        std::vector<uint8_t> serialize(std::vector<uint8_t> buf);
+        static Order deserialize(std::vector<uint8_t> buf);
+        static std::vector<uint8_t> serialize(Order buf);
 };
+
+#pragma pack(push, 1)
+struct OrderHeader {
+    int32_t id        = 0;
+    int32_t unique_id = 0;
+    int32_t sender    = 0;
+    uint32_t args_count = 0;
+} __attribute__((packed));
+#pragma pack(pop)
 
 class IPC {
     public:

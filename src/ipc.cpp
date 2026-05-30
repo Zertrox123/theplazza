@@ -77,16 +77,12 @@ bool IPC::send_order(std::string target, int id, int sender, std::vector<std::st
     };
     bool a = fs::exists(path + '/' + target);
     if (a) {
-        std::ofstream wfile;
-        wfile.open(path + '/' + target + '/' + private_id_str);
-        wfile << order_to_write.id << " "
-              << order_to_write.unique_id << " " 
-              << order_to_write.sender << " ";
-        for (auto args : order_to_write.args) {
-            wfile << args << " ";
+        std::vector<uint8_t> buf = Order::serialize(order_to_write);
+        std::ofstream file(path + '/' + target + '/' + std::to_string(private_id), std::ios::binary | std::ios::trunc);
+        if (file.is_open()) {
+            file.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+            file.close();
         }
-        wfile << std::endl;
-        wfile.close();
     } else {
         return false;
     }
@@ -121,34 +117,18 @@ bool IPC::update_ipc() {
             continue;
         std::ifstream file;
         file.open(entry.path());
-        std::string line;
-        while (std::getline(file, line)) {
-            std::stringstream ss(line);
-            std::string word;
-            std::string id;
-            std::string unique_id;
-            std::string sender;
-            std::vector<std::string> args;
-            std::getline(ss, id, ' ');
-            std::getline(ss, unique_id, ' ');
-            std::getline(ss, sender, ' ');
-
-            while (std::getline(ss, word, ' ')) {
-                args.push_back(word);
-            }
-
-            new_orders.push_back(Order{
-                    std::atoi(id.c_str()),
-                    std::atoi(unique_id.c_str()),
-                    std::atoi(sender.c_str()),
-                    args
-            });
-
-            file.close();
-        }
+        std::ifstream filee(path, std::ios::binary | std::ios::ate);
+        size_t size = file.tellg();
+        filee.seekg(0, std::ios::beg);
+        std::vector<uint8_t> buf(size);
+        filee.read(reinterpret_cast<char*>(buf.data()), size);
+        filee.close();
      
-        orders = new_orders;
+        Order orders;
+        orders = Order::deserialize(buf);
+        new_orders.push_back(orders);
     }
+    orders = new_orders;
     return false;
 };
 

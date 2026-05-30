@@ -21,9 +21,17 @@ void Kitchen::loop(std::string id) {
         std::thread t(cook.start, "c" + std::to_string(cook_count)); 
     }
 
+    std::cout << "Kitchen " << ipc.getId() << " is up" << std::endl;
     while (true) {
         for (auto i : ipc.get_orders()) {
-            std::cout << "Kitchen " << ipc.getId() << " received orders" << std::endl;
+            std::cout << "aa" << std::endl;
+            switch (i.id) {
+                case OCOOK_PIZZA:
+                    break;
+                case ODESTRUCT:
+                    break;
+            }
+            ipc.set_order_done(i);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
