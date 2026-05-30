@@ -4,13 +4,10 @@
 #include <thread> 
 #include <chrono> 
 
-Cook::Cook(int id, Queue<Order>& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId)
+Cook::Cook(int id, Queue& queue, PlazzaCondVar& bell, PlazzaMutex& bellMutex, bool& isRunning, double multiplier, std::string kitchenId)
     : id(id), queue(queue), bell(bell), bellMutex(bellMutex), isRunning(isRunning), multiplier(multiplier), kitchenId(kitchenId) {}
 
 void Cook::work() {
-    double totalTimeSeconds = baseTime * multiplier; 
-    int sleepTimeMs = totalTimeSeconds * 1000;
-
     while (isRunning) {
         Order currentOrder;
         std::unique_lock<std::mutex> lock(bellMutex.get());
@@ -21,7 +18,7 @@ void Cook::work() {
             break; 
         }
         if (queue.tryPop(currentOrder)) {
-            lock.unlock(); 
+            lock.unlock();
             std::string pizzaName = currentOrder.args[0];
             std::cout << "[Cuisine " << kitchenId << "] Cook " << id << " prepare une " << pizzaName << std::endl;
             int baseTime = 0;
@@ -34,8 +31,10 @@ void Cook::work() {
             } else if (pizzaName == "Fantasia" || pizzaName == "fantasia") {
                 baseTime = 4; 
             }
+            double totalTimeSeconds = baseTime * multiplier; 
+            int sleepTimeMs = totalTimeSeconds * 1000;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTimeMs));
-            std::cout << "\n[Cuisine " << _kitchen_id << "] Cook " << _id << " a TERMINE la " << pizza_name << std::endl << "$> ";
+            std::cout << "\n[Cuisine " << kitchenId << "] Cook " << id << " a TERMINE la " << pizzaName << std::endl << "$> ";
             IPC ipc;
             ipc.setId(kitchenId);
             ipc.set_order_done(currentOrder); 

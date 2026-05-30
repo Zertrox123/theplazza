@@ -17,10 +17,10 @@ int main(int argc, char **argv) {
         std::cerr << "ERR: another plazza is running" << std::endl;
         return 0;
     }
-    utils::init();
     double mult = std::stod(argv[1]);
     int cooks_kitchen = std::stoi(argv[2]);
     int replace_time = std::stoi(argv[3]);
+    utils::init(mult, cooks_kitchen, replace_time);
     int max_capacity_per_kitchen = 2 * cooks_kitchen;
     std::vector<std::string> active_kitchens;
     int next_kitchen_id = 3;

@@ -32,7 +32,7 @@ void PlazzaCondVar::notifyAll()
     _cv.notify_all();
 }
 
-void PlazzaCondVar::wait(Lock& lock, Predicate pred)
+void PlazzaCondVar::wait(std::unique_lock<std::mutex>& lock, std::function<bool()> pred)
 {
     _cv.wait(lock, pred);
 }

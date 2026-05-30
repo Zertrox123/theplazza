@@ -3,9 +3,7 @@
 #include <vector> 
 #include <thread> 
 #include "Cook.hpp" 
-#include "SafeQueue.hpp" 
-#include "PlazzaCondVar.hpp" 
-#include "PlazzaMutex.hpp" 
+#include "Plazza.hpp" 
 #include "ipc.hpp" 
 
 class Kitchen { 
@@ -18,9 +16,18 @@ class Kitchen {
         int cooksPerKitchen; 
         int replaceTime; 
         bool isRunning; 
-        Queue<Order> orders; 
+        Queue orders;
         PlazzaCondVar bell; 
         PlazzaMutex bellMutex; 
         std::vector<Cook*> cooks; 
         std::vector<std::thread> cookThreads; 
+        int stockDough;
+        int stockTomato;
+        int stockGruyere;
+        int stockHam;
+        int stockMushrooms;
+        int stockSteak;
+        int stockEggplant;
+        int stockGoatCheese;
+        int stockChiefLove;
 };

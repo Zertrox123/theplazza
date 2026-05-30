@@ -44,7 +44,7 @@ void Kitchen::loop(std::string id) {
             Order commande = nouvellesCommandes[i];
             bool isKnow = false;
             for (long unsigned int j = 0; j < queueId.size(); j++) {
-                if (QueueId[j] == commande.unique_id) {
+                if (queueId[j] == commande.unique_id) {
                     isKnow = true;
                     break;
                 }

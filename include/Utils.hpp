@@ -1,4 +1,4 @@
 #pragma once
 namespace utils {
-    void init();
+    void init(double multiplier, int cooksPerKitchen, int replaceTime);
 };

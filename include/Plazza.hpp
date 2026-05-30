@@ -31,16 +31,15 @@ class PlazzaCondVar {
         ~PlazzaCondVar() = default;
         void notifyOne();
         void notifyAll();
-        template<typename Lock, typename Predicate>
-        void wait(Lock& lock, Predicate pred);
+        void wait(std::unique_lock<std::mutex>& lock, std::function<bool()> pred);
     private:
         std::condition_variable _cv;
 };
 
 class Queue {
     public:
-        SafeQueue() = default;
-        ~SafeQueue() = default;
+        Queue() = default;
+        ~Queue() = default;
         void push(const Order& item);
         bool tryPop(Order& item) {
             _mutex.lock();
