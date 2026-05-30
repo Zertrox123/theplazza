@@ -138,7 +138,6 @@ std::string IPC::getId() const{
 void IPC::setId(std::string _id) {
     id = _id;
 }
-
 bool IPC::update_ipc() {
     std::unique_lock<std::mutex> guard(orders_mutex);
     std::vector<Order> new_orders;

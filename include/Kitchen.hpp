@@ -1,25 +1,26 @@
 #pragma once
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include "Cook.hpp"
-#include "Pizza.hpp"
+#include <string> 
+#include <vector> 
+#include <thread> 
+#include "Cook.hpp" 
+#include "SafeQueue.hpp" 
+#include "PlazzaCondVar.hpp" 
+#include "PlazzaMutex.hpp" 
+#include "ipc.hpp" 
 
-class Kitchen {
+class Kitchen { 
     public:
-        Kitchen();
+        Kitchen(double multiplier, int cooksPerKitchen, int replaceTime);
         ~Kitchen();
-        void add_cook(Cook cook);
-        void actual_time(long int kactual_time);
         void loop(std::string id);
-        void get_status() const;
-        void set_status(int stat) const;
     private:
-        int _multiplier;
-        int order_count;
-        std::vector<Pizza> waiting_order;
-        std::vector<Cook> cooks;
-        long int kactual_time;
-        std::unordered_map<std::string, int> stock_ingredient;
-        int status;
+        double multiplier; 
+        int cooksPerKitchen; 
+        int replaceTime; 
+        bool isRunning; 
+        Queue<Order> orders; 
+        PlazzaCondVar bell; 
+        PlazzaMutex bellMutex; 
+        std::vector<Cook*> cooks; 
+        std::vector<std::thread> cookThreads; 
 };
