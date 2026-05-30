@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Ingredient.hpp"
+#include <functional>
 
 enum PizzaType
 {

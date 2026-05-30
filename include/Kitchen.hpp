@@ -5,6 +5,7 @@
 #include "Cook.hpp" 
 #include "Plazza.hpp" 
 #include "ipc.hpp" 
+#include <functional>
 
 class Kitchen { 
     public:

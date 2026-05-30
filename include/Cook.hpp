@@ -2,6 +2,7 @@
 #include "Plazza.hpp"
 #include "ipc.hpp"
 #include <string>
+#include <functional>
 
 class Cook { 
     public:
