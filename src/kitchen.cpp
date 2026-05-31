@@ -207,8 +207,5 @@ void Kitchen::loop(std::string id) {
             break;
         }
     }
-<<<<<<< Updated upstream
-=======
     exit(0);
->>>>>>> Stashed changes
 }
