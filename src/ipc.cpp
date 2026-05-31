@@ -30,7 +30,7 @@ IPC::IPC() {
 };
 
 IPC::~IPC()  {
-    if (initialized && id == "0") {
+    if (initialized) {
         fs::remove_all(path);
     }
 }

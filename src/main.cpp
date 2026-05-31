@@ -1,5 +1,6 @@
 #include "ipc.hpp"
 #include "Utils.hpp"
+#include <memory>
 #include <sys/wait.h>
 #include "Kitchen.hpp"
 #include <iostream>
