@@ -100,6 +100,7 @@ void Kitchen::loop(std::string id) {
         cooks.push_back(c);
         threads.push_back(std::thread(&Cook::work, c));
     }
+<<<<<<< Updated upstream
     std::vector<int> qid;
     std::vector<int> sid;
     int idle = 0;
@@ -109,6 +110,10 @@ void Kitchen::loop(std::string id) {
         bool got_new = false;
         for (long unsigned i = 0; i < cmds.size(); i++) {
             Order cmd = cmds[i];
+            if (cmd.id == ODESTRUCT) {
+                run = false;
+                break;
+            }
             if (cmd.id == OSTATUS) {
                 if (cmd.sender == 0) {
                     bool done = false;
@@ -136,6 +141,22 @@ void Kitchen::loop(std::string id) {
             for (long unsigned j = 0; j < qid.size(); j++) {
                 if (qid[j] == cmd.unique_id) {
                     known = true;
+=======
+    std::vector<int> queueId;
+    int inactiveLoops = 0;
+    int timeLastRegen = 0;
+    while (isRunning) {
+        std::vector<Order> nouvellesCommandes = ipc.get_orders();
+        bool newOrders = false;
+        for (long unsigned int i = 0; i < nouvellesCommandes.size(); i++) {
+            Order commande = nouvellesCommandes[i];
+            if (commande.id == ODESTRUCT)
+                isRunning = false;
+            bool isKnow = false;
+            for (long unsigned int j = 0; j < queueId.size(); j++) {
+                if (queueId[j] == commande.unique_id) {
+                    isKnow = true;
+>>>>>>> Stashed changes
                     break;
                 }
             }
@@ -186,4 +207,8 @@ void Kitchen::loop(std::string id) {
             break;
         }
     }
+<<<<<<< Updated upstream
+=======
+    exit(0);
+>>>>>>> Stashed changes
 }
