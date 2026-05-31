@@ -1,0 +1,17 @@
+name: action
+
+on:
+  push:
+
+jobs:
+  check_program_compilation:
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v5
+      - name: compiling repo
+        timeout-minutes: 2
+        run: make -j
+      - name: clean repo
+        run: make clean
