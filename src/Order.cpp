@@ -40,14 +40,14 @@ Order Order::deserialize(std::vector<uint8_t> buf) {
     size_t padding = sizeof(OrderHeader);
     for (uint32_t i = 0; i < hdr.args_count; ++i) {
         if (padding + sizeof(uint32_t) > buf.size())
-            std::cerr << "error parser " << i << std::endl;
+            return o;
 
         uint32_t len;
         memcpy(&len, buf.data() + padding, sizeof(uint32_t));
         padding += sizeof(uint32_t);
 
         if (padding + len > buf.size())
-            std::cerr << "error parser " << i << std::endl;
+            return o;
 
         std::string a(reinterpret_cast<const char*>(buf.data() + padding), len);
         o.args.push_back(a);

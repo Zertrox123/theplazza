@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
                 std::cout << "Format invalide: " << line << "\n";
             }
         }
-        if (isatty(0)) {
+        if (!isatty(0)) {
             ipc.send_order_broadcast(ODESTRUCT, 0, std::vector<std::string> {""});
             break;
         }
