@@ -1,5 +1,6 @@
 #include "ipc.hpp"
 #include "Utils.hpp"
+#include <filesystem>
 #include <memory>
 #include <sys/wait.h>
 #include "Kitchen.hpp"
@@ -9,6 +10,8 @@
 #include <unistd.h>
 
 int main(int argc, char **argv) {
+    std::filesystem::remove_all("/dev/shm/plazza/");
+    std::filesystem::remove_all("/tmp/plazza/");
     IPC ipc;
     std::string in;
     std::regex pat(R"(\s*([a-zA-Z]+)\s+(S|M|L|XL|XXL)\s+x([1-9][0-9]*)\s*)");
