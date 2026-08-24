@@ -1,6 +1,6 @@
 # The Plazza
 
-Simulation concurrente et distribuée en C++20 qui gère les commandes d'une pizzeria.
+Simulation concurrente et distribuée en C++20 qui gère les commandes d'une pizzeria
 
 Architecture :
 - Une réception centrale qui reçoit les commandes et les envoie aux cuisines
